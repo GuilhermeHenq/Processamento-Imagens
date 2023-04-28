@@ -1,3 +1,12 @@
+/*=============================================================
+2 * UNIFAL . . . . . . Universidade Federal de Alfenas.
+3 * BACHARELADO EM CIENCIA DA COMPUTACAO.
+4 * Trabalho . . . . . Imagem ASCII
+5 * Discplina: . . . . Processamento de Imagens
+6 * Professor: . . . . Luiz Eduardo da Silva
+7 * Aluno . . . . . :  Guilherme Henrique Pereira Serafini
+8 * Data . . . . . . : 28/04/2023
+9 *=============================================================*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -53,7 +62,7 @@ int main(int argc, char *argv[]) {
 
 
    In = img_get(nameIn, &nr, &nc, &ml, GRAY);
-//   In = img_resample(In, nr, nc, numRows, numCols);
+// In = img_resample(In, nr, nc, numRows, numCols);
    ascii(In, nameOut, numCols, numRows, symbols, numSymbols);
    img_free(In);
 
