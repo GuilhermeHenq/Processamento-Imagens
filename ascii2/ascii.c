@@ -12,101 +12,60 @@
 #include <string.h>
 #include "imagelib.h"
 
-
-/*void ascii(image In, char* nameOut, int numCols, int numRows, char* symbols, int numSymbols) {
-   int i, j, k, idx;
-   double teste;
-   FILE* fpOut = fopen(nameOut, "w");
-
-
-   if (!fpOut) {
-       printf("Erro ao abrir o arquivo de saída.\n");
-       exit(1);
-   }
-
-
-   double range = 255.0 / (numSymbols - 1);
-    int linha = nr / numRows;
-    int coluna = nc / numCols;
-
-   for (i = 0; i < numRows; i++) {
-       for (j = 0; j < numCols; j++) {
-           teste = In[(i*numRows)*numCols + (j*numCols)];
-
-
-           idx = (int) (teste / range);
-           if (idx >= numSymbols) idx = numSymbols - 1;
-
-
-           for (k = 0; k < strlen(symbols); k++) {
-               if (k == idx) {
-                   fputc(symbols[k], fpOut);
-                   break;
-               }
-           }
-       }
-       fputc('\n', fpOut);
-   }
-   fclose(fpOut);
-}
-*/
-
-
-int main(int argc, char *argv[]) {
-   image In, Out;
-   int nr, nc, ml;
-   char *nameIn = argv[1];
-   char *nameOut = "Saida.txt";
-   int numCols = atoi(argv[2]);
-   int numRows = atoi(argv[3]);
-   char *symbols = argv[4];
-   int numSymbols = strlen(symbols);
-
-    int i, j, k, idx;
+int main(int argc, char *argv[])
+{
+    image In, Out;
+    int nr, nc, ml;
+    char *p, nameIn[100], nameOut[100], cmd[110];
+    int numCols = atoi(argv[2]);
+    int numRows = atoi(argv[3]);
+    char symbols[30];
+    strcpy(symbols, argv[4]);
+    int numSymbols = strlen(symbols);
+    img_name(argv[1], nameIn, nameOut, GRAY);
     double teste;
-    FILE* fpOut;
-   fpOut = fopen("saida.txt", "w");
 
+    In = img_get(nameIn, &nr, &nc, &ml, GRAY);
+    Out = img_alloc(nr, nc);
+    FILE *fpOut;
+    fpOut = fopen("result.txt", "w");
 
-   if (!fpOut) {
-       printf("Erro ao abrir o arquivo de saída.\n");
-       exit(1);
-   }
-
-
-   double range = 256 / (numSymbols);
-    int linha = nr / numRows;
-    int coluna = nc / numCols;
-
-    //idx = (int) (teste / range);
-
-    for(int i = 0; i < nc * nr; i++) {
-        int aux = In[i] / range;
-        if(aux >= numSymbols)
-            aux = numSymbols -1;
-        Out[i] = symbols[aux];
+    if (!fpOut)
+    {
+        printf("Erro ao abrir o arquivo de saída.\n");
+        exit(1);
     }
 
-   for (i = 0; i < numRows; i++) {
-       for (j = 0; j < numCols; j++) {
-           //teste = In[(i*linha) * nc + (j*coluna)];
-           fprintf(fpOut,"%c", Out[(i*linha) * nc + (j*coluna)]);
+
+    double range = 255 / (numSymbols);
+    int redimensionadaL = nr / numRows;
+    int redimensionadaC = nc / numCols;
+
+    for (int i = 0; i < nc * nr; i++)
+    {
+        int endchar = In[i] / range;
+        if (endchar >= numSymbols)
+            endchar = numSymbols - 1;
+        Out[i] = symbols[endchar];
+    }
+
+    for (int i = 0; i < numRows; i++)
+    {
+        for (int j = 0; j < numCols; j++)
+        {
+            int porcentagemL = (i*redimensionadaL);
+            int porcentagemC = (j*redimensionadaC);
+            int indice = (porcentagemL) * nc + (porcentagemC);
+            fputc(Out[indice], fpOut);
         }
-       fputc('\n', fpOut);
-   
-   fclose(fpOut);
+        fputc('\n', fpOut);
     }
+    fclose(fpOut);
+    img_put(Out, nameOut, nr, nc, ml, GRAY);
+    sprintf(cmd, "%s %s &", VIEW, nameOut);
+    system(cmd);
+    img_free(In);
+    img_free(Out);
 
-    img_free(fpOut);
-
-
-   In = img_get(nameIn, &nr, &nc, &ml, GRAY);
-   //In = img_resample(In, nr, nc, numRows, numCols);
-   //ascii(In, nameOut, numCols, numRows, symbols, numSymbols);
-   img_free(In);
-
-
-   return 0;
+    return 0;
 }
-
-
